@@ -10,7 +10,7 @@ const Profile = () => {
   const [bio, setbio] = useState("");
   const [address, setaddress] = useState("");
   const { user } = useUser();
-  console.log(typeof user?.id);
+  // console.log(typeof user?.id);
 
   const navigate = useNavigate();
   // console.log(preview);

@@ -1,42 +1,41 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import Template from "./template";
+import { useLocation } from "react-router-dom";
 
-const Search = () => {
-  const [location, setlocation] = useState("");
-  const [bio, setbio] = useState("");
-  const [cost, setcost] = useState("");
-  const navigate = useNavigate();
-  // console.log(preview);
-  // console.log(address);
-  // console.log(location);
+function SearchPage() {
+  const url = import.meta.env.VITE_DB_URL;
+  const [nlocation, setlocation] = useState("");
+  const [data, setData] = useState([
+    {
+      image: "image Loading...",
+      rent: 0,
+      location: "location Loading...",
+      house_desc: "description Loading...",
+      userid: "yupp",
+    },
+  ]);
+  const location = useLocation();
+  //   console.log(location.search);
+  const nurl = new URLSearchParams(location.search);
+  useEffect(() => {
+    (async () => {
+      if (nlocation.trim() !== "") {
+        nurl.set("location", nlocation);
+        // console.log(location.search, nurl.toString());
+        location.search = "?" + nurl.toString();
+      }
+      const response = await fetch(url + "api/filteruser" + location.search);
+      const data = await response.json();
+      console.log(data);
+      setData(data);
+    })();
+  }, [nlocation]);
 
-  const handleTextArea = (e: any) => {
-    setbio(e.target.value);
-    console.log(bio);
-  };
-  const handleClick = () => {
-    if (location.trim() !== "" && bio.trim() !== "") {
-      navigate(`/user/searchpage?location=${location}&cost=${cost}`);
-    }
-  };
   return (
-    <div className="flex flex-col items-stretch w-full px-10 py-6 font-sans">
-      <div className="w-[50%] flex flex-col self-center text-left text-pretty max-sm:w-full">
-        <p className="text-[2.5rem] font-black mb-3">Welcome!</p>
-        <div>
-          <textarea
-            onChange={(e) => handleTextArea(e)}
-            name="text"
-            id="textid"
-            cols={50}
-            rows={5}
-            className=" w-full resize-none py-5 px-10 text-gray-600 shadow-inner shadow-gray-300 rounded-xl outline-none"
-            placeholder="Tell somethine about yourself....."
-          ></textarea>
-        </div>
-        <p className="text-xl font-bold mb-5">Add your location</p>
+    <div className="w-full flex flex-col items-center my-10">
+      <div>
         <select
-          className="w-full outline-none border-b-2 border-gray-200 py-2 mb-10 text-gray-400 font-semibold"
+          className="w-[15rem] absolute top-2.5 max-sm:left-5 right-[6rem] outline-none shadow-inner shadow-gray-300 py-2 px-5 rounded-xl mb-10 text-gray-400 font-semibold"
           onChange={(e) => setlocation(e.target.value)}
         >
           <option value="">Select State</option>
@@ -79,27 +78,20 @@ const Search = () => {
           <option value="Delhi">Delhi</option>
           <option value="Puducherry">Puducherry</option>
         </select>
-        <input
-          type="text"
-          onChange={(e) => setcost(e.target.value)}
-          placeholder="Enter cost limit"
-          className="w-[20rem] max-sm:w-full py-2 px-5 rounded-xl font-semibold outline-none shadow-inner shadow-gray-300 mb-10"
-        />
-        <div>
-          <button
-            onClick={handleClick}
-            className={`px-20 py-2  ${
-              location.trim() !== "" && bio.trim() !== ""
-                ? "bg-pink-500"
-                : "bg-pink-300"
-            } font-semibold text-white rounded-xl`}
-          >
-            Search
-          </button>
-        </div>
+      </div>
+      <div>
+        {data.map((value, index) => (
+          <Template
+            image={value.image}
+            house_desc={value.house_desc}
+            location={value.location}
+            rent={value.rent}
+            userid={value.userid}
+          />
+        ))}
       </div>
     </div>
   );
-};
+}
 
-export default Search;
+export default SearchPage;

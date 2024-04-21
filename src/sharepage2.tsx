@@ -73,7 +73,7 @@ const Sharepage2 = () => {
     console.log(data);
     // console.log(interests);
 
-    navigate("/user/profile3?id=" + user?.id);
+    navigate("/user/profile3?userid=" + user?.id);
   };
   return (
     <div className="flex flex-col items-stretch w-full px-10 py-6 font-sans">

@@ -11,6 +11,7 @@ import SignInPage from "./sign-in.tsx";
 import SignUpPage from "./sign-up.tsx";
 import Mainpage from "./mainpage.tsx";
 import Search from "./searchRoom.tsx";
+import SearchPage from "./searchPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
           {
             path: "search",
             element: <Search />,
+          },
+          {
+            path: "searchpage",
+            element: <SearchPage />,
           },
         ],
       },
