@@ -15,7 +15,7 @@ const Search = () => {
     console.log(bio);
   };
   const handleClick = () => {
-    if (location.trim() !== "" && bio.trim() !== "") {
+    if (bio.trim() !== "") {
       navigate(`/user/searchpage?location=${location}&cost=${cost}`);
     }
   };
@@ -89,9 +89,7 @@ const Search = () => {
           <button
             onClick={handleClick}
             className={`px-20 py-2  ${
-              location.trim() !== "" && bio.trim() !== ""
-                ? "bg-pink-500"
-                : "bg-pink-300"
+              bio.trim() !== "" ? "bg-pink-500" : "bg-pink-300"
             } font-semibold text-white rounded-xl`}
           >
             Search

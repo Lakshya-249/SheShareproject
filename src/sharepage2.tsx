@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import pic1 from "./assets/no-smoking.png";
 import pic2 from "./assets/no-animals.png";
 import pic3 from "./assets/credit-card.png";
 import { useUser } from "@clerk/clerk-react";
 
 const Sharepage2 = () => {
+  const location = useLocation();
+  const userid = new URLSearchParams(location.search).get("id");
   const navigate = useNavigate();
   const url = import.meta.env.VITE_DB_URL;
-  const { user } = useUser();
   let yourDate = new Date();
   let date = yourDate.toISOString().split("T")[0];
   const [interests, setFormData] = useState({
@@ -67,13 +68,13 @@ const Sharepage2 = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ userid: user?.id, interests }),
+      body: JSON.stringify({ userid: userid, interests }),
     });
     const data = await response.json();
     console.log(data);
     // console.log(interests);
 
-    navigate("/user/profile3?userid=" + user?.id);
+    navigate("/user/profile3?userid=" + userid);
   };
   return (
     <div className="flex flex-col items-stretch w-full px-10 py-6 font-sans">

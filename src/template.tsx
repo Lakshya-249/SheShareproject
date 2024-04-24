@@ -8,22 +8,33 @@ function Template(props: any) {
   return (
     <div
       onClick={() => navigate("/user/profile3?userid=" + userid)}
-      className="w-[18rem] h-[16rem] font-serif flex flex-col m-5 hover:cursor-pointer shadow-lg hover:shadow-xl"
+      className="w-[20rem] h-[20rem] flex flex-col m-10 pb-5 hover:cursor-pointer"
     >
       <div className="w-full mb-2">
         <img
           src={props.image}
           alt="image Loading..."
-          className="h-[8rem] w-full"
+          className="h-[12rem] w-full rounded-xl"
         />
       </div>
-      <div className="px-3 text-left text-md font-semibold text-gray-500">
+      <div className="px-3 space-y-1 text-left text-md font-semibold">
         <p>{props.house_desc}</p>
         <p className="font-light">{props.location}</p>
-        <p className="text-gray-300 text-lg">
-          &#8377; <span className="text-green-300">{props.rent}</span>{" "}
+        <p className="font-light">
+          {props.fromto} - {props.onto}
+        </p>
+        <p className="">
+          &#8377; {props.rent} <span className="font-light">month</span>
         </p>
       </div>
+      {/* <div className="flex space-x-10 px-5">
+        <button className="px-4 py-2 w-[5rem] text-white font-semibold rounded-xl bg-[#ffb5a7]">
+          Rent
+        </button>
+        <button className="px-2 py-2 w-[5rem] text-white font-semibold rounded-xl bg-yellow-200">
+          Review
+        </button>
+      </div> */}
     </div>
   );
 }
@@ -34,6 +45,8 @@ Template.propTypes = {
   house_desc: PropTypes.string,
   location: PropTypes.string,
   rent: PropTypes.number,
+  fromto: PropTypes.string,
+  onto: PropTypes.string,
 };
 
 Template.defaultProps = {
@@ -43,6 +56,8 @@ Template.defaultProps = {
   house_desc: "description of house is show here..",
   location: "State",
   rent: 2000,
+  fromto: "2004-02-01",
+  onto: "2004-02-05",
 };
 
 export default Template;

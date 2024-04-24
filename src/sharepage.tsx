@@ -55,7 +55,7 @@ const Profile = () => {
       const data = await response.json();
       console.log(data);
 
-      navigate("/user/profile2");
+      navigate("/user/profile2?id=" + data._id);
     }
   };
   return (

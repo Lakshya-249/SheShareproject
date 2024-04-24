@@ -12,6 +12,7 @@ import SignUpPage from "./sign-up.tsx";
 import Mainpage from "./mainpage.tsx";
 import Search from "./searchRoom.tsx";
 import SearchPage from "./searchPage.tsx";
+import Errorpage from "./errorpage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,12 @@ const router = createBrowserRouter([
       {
         path: "sign-in",
         element: <SignInPage />,
+        children: [
+          {
+            path: "sso-callback",
+            element: <Errorpage />,
+          },
+        ],
       },
       {
         path: "sign-up",
