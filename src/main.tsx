@@ -13,6 +13,7 @@ import Mainpage from "./mainpage.tsx";
 import Search from "./searchRoom.tsx";
 import SearchPage from "./searchPage.tsx";
 import Errorpage from "./errorpage.tsx";
+import Cart from "./cart.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
+      },
+      {
+        path: "cart",
+        element: <Cart />,
       },
       {
         path: "sign-in",

@@ -12,7 +12,7 @@ const Search = () => {
 
   const handleTextArea = (e: any) => {
     setbio(e.target.value);
-    console.log(bio);
+    // console.log(bio);
   };
   const handleClick = () => {
     if (bio.trim() !== "") {

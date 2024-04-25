@@ -21,7 +21,7 @@ const Home = () => {
       <img
         src={logo}
         alt="logo"
-        className="w-[20rem] max-sm:w-[15rem] opacity-60 absolute left-[50%] top-12 max-sm:top-5 -translate-x-[50%]"
+        className="w-[20rem] max-sm:w-[15rem] max-sm:rounded-full opacity-60 absolute left-[50%] top-12 max-sm:top-5 -translate-x-[50%]"
       />
       <div className="flex flex-col space-y-10 bg-[#f8edeb] max-sm:pb-10 h-[30rem] w-[50%] justify-center max-sm:justify-end items-center">
         <div

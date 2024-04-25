@@ -1,9 +1,11 @@
+import { useUser } from "@clerk/clerk-react";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
 function Mainpage() {
   const url = import.meta.env.VITE_DB_URL;
   const location = useLocation();
+  const { user } = useUser();
   const [data, setData] = useState({
     userid: "random",
     image: "imageurl",
@@ -17,6 +19,7 @@ function Mainpage() {
     rent: 4000,
     rentTo: "2024-04-25",
     week: 3,
+    _id: "num",
   });
   console.log(location.search);
   useEffect(() => {
@@ -27,6 +30,20 @@ function Mainpage() {
       setData(data);
     })();
   }, []);
+
+  const handlecart = async () => {
+    const response = await fetch(url + "api/addcart?userId=" + user?.id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        review: data?._id,
+      }),
+    });
+    const data1 = await response.json();
+    console.log(data1);
+  };
 
   return (
     <div className="w-full my-10 flex max-sm:flex-wrap">
@@ -63,7 +80,10 @@ function Mainpage() {
           <button className="px-4 py-2 w-[5rem] text-white font-semibold rounded-xl bg-[#ffb5a7]">
             Rent
           </button>
-          <button className="px-3 py-2 border-2 border-yellow-200 text-yellow-200 rounded-xl">
+          <button
+            onClick={handlecart}
+            className="px-3 py-2 border-2 border-yellow-200 text-yellow-200 rounded-xl"
+          >
             Add to Review
           </button>
         </div>
