@@ -52,9 +52,9 @@ function Mainpage() {
           <img src={data.image} alt="image" />
         </div>
       </div>
-      <div className="w-[50%] max-sm:w-full px-10 max-sm:pt-10 flex flex-col space-y-5 max-sm:mt-5 flex-wrap text-left">
-        <p className="text-4xl text-md text-wrap">{data.house_desc}</p>
-        <p className="text-gray-500 text-3xl text-md text-wrap">{data.bio}</p>
+      <div className="w-[50%] max-sm:w-full px-10 max-sm:pt-10 flex flex-col text-sm space-y-5 max-sm:mt-5 flex-wrap text-left">
+        <p className="text-xl text-md text-wrap">{data.house_desc}</p>
+        <p className="text-gray-500 text-md text-md text-wrap">{data.bio}</p>
         <p>Location: {data.location}</p>
         <p>Address: {data.address}</p>
         <p>

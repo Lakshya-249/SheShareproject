@@ -32,7 +32,7 @@ function SearchPage() {
   }, [nlocation]);
 
   return (
-    <div className="w-full flex justify-center items-center my-10">
+    <div className="w-full flex flex-wrap justify-center items-center my-10">
       <div>
         <select
           className="w-[15rem] absolute top-2.5 max-sm:left-5 right-[6rem] outline-none shadow-inner shadow-gray-300 py-2 px-5 rounded-xl mb-10 text-gray-400 font-semibold"
@@ -79,7 +79,7 @@ function SearchPage() {
           <option value="Puducherry">Puducherry</option>
         </select>
       </div>
-      <div className="flex">
+      <div className="flex flex-wrap justify-center">
         {data.map((value, index) => (
           <Template
             image={value.image}

@@ -2,7 +2,11 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SignedIn, SignedOut, UserButton } from "@clerk/clerk-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping, faHouse } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCartShopping,
+  faComment,
+  faHouse,
+} from "@fortawesome/free-solid-svg-icons";
 
 function Header() {
   const path = useLocation();
@@ -32,6 +36,13 @@ function Header() {
           icon={faCartShopping}
           style={{ color: "#032e4f" }}
           size="xl"
+        />
+        <FontAwesomeIcon
+          onClick={() => navigate("/rent")}
+          icon={faComment}
+          size="xl"
+          className="hover:cursor-pointer"
+          style={{ color: "#032e4f" }}
         />
         <SignedIn>
           <UserButton afterSignOutUrl="/sign-in" />

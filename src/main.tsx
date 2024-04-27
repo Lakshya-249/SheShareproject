@@ -14,6 +14,7 @@ import Search from "./searchRoom.tsx";
 import SearchPage from "./searchPage.tsx";
 import Errorpage from "./errorpage.tsx";
 import Cart from "./cart.tsx";
+import Refund from "./refund.tsx";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />,
+      },
+      {
+        path: "rent",
+        element: <Refund />,
       },
       {
         path: "sign-in",

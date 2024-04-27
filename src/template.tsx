@@ -18,7 +18,7 @@ function Template(props: any) {
         />
       </div>
       <div className="px-3 space-y-1 text-left text-md font-semibold">
-        <p>{props.house_desc}</p>
+        <p className="h-[3rem] overflow-hidden">{props.house_desc}</p>
         <p className="font-light">{props.location}</p>
         <p className="font-light">
           {props.fromto} - {props.onto}

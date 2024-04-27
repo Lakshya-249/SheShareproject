@@ -20,6 +20,7 @@ const Sharepage2 = () => {
     rentFrom: date,
     rentTo: "",
     week: 1,
+    available: true,
   });
 
   const ref = useRef(null);
@@ -143,7 +144,7 @@ const Sharepage2 = () => {
                 ref={ref2}
                 onClick={() => {
                   handleClick(ref2, ref5, ref8);
-                  setData("pets", !interests.drinking_smoking);
+                  setData("pets", !interests.pets);
                 }}
                 className="w-5 h-5 rounded-full border-[1px] border-gray-400"
               >

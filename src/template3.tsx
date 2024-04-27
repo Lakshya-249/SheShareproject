@@ -3,28 +3,15 @@ import PropTypes from "prop-types";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
-function Template2(props: any) {
+function Template3(props: any) {
   const url = import.meta.env.VITE_DB_URL;
   const { user } = useUser();
   const userId = props.userid;
   const navigate = useNavigate();
+  const available: Boolean = props.available;
   //   console.log(userId);
 
-  const handledelete = async () => {
-    const response = await fetch(url + "api/deletecart?userId=" + user?.id, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ reviewId: userId }),
-    });
-    const data = await response.json();
-    // this.forceUpdate();
-    console.log(data);
-    // window.location.reload();
-  };
-
-  const handlerent = async () => {
+  const handlerefund = async () => {
     const response = await fetch(url + "api/rent?userId=" + userId, {
       method: "PUT",
       headers: {
@@ -34,20 +21,14 @@ function Template2(props: any) {
     const data = await response.json();
     // this.forceUpdate();
     console.log(data);
-    navigate("/rent");
-    // window.location.reload();
+    window.location.reload();
   };
 
-  const available: Boolean = props.available;
-
-  if (!available) {
+  if (available) {
     return null;
   } else {
     return (
-      <div
-        onClick={() => navigate("/user/profile3?userid=" + userId)}
-        className="w-full h-[18rem] max-sm:h-auto max-sm:px-5 hover:cursor-pointer flex my-5 px-10 flex-wrap"
-      >
+      <div className="w-full h-[18rem] max-sm:h-auto max-sm:px-5 hover:cursor-pointer flex my-5 px-10 flex-wrap">
         <div className="w-[20%] bg-gray-200 h-full max-sm:h-auto rounded-xl max-sm:w-full">
           <img
             src={props.image}
@@ -59,23 +40,21 @@ function Template2(props: any) {
           <p className="text-xl h-[3.5rem] overflow-hidden">
             {props.house_desc}
           </p>
-          <p className="text-gray-400 h-[4rem] overflow-hidden">{props.bio}</p>
+          <p className="text-gray-400 h-[2.5rem] overflow-hidden">
+            {props.bio}
+          </p>
           <p>
             Rent: <span className="font-semibold">&#8377; {props.rent}</span>{" "}
             month
           </p>
+          <p>Rented on: {props.rentedon.split("T")[0]}</p>
+          <p>Refund within 45 days of allotment.</p>
           <div className="flex justify-end space-x-10 w-full max-sm:justify-start">
             <button
-              onClick={handlerent}
+              onClick={handlerefund}
               className="px-4 py-2 w-[5rem] text-white font-semibold rounded-xl bg-[#ffb5a7]"
             >
-              Rent
-            </button>
-            <button
-              onClick={handledelete}
-              className="px-3 py-2 border-2 border-red-300 text-red-300 rounded-xl"
-            >
-              Remove from review
+              Refund
             </button>
           </div>
         </div>
@@ -84,16 +63,17 @@ function Template2(props: any) {
   }
 }
 
-Template2.propTypes = {
+Template3.propTypes = {
   userid: PropTypes.string,
   bio: PropTypes.string,
   image: PropTypes.string,
   house_desc: PropTypes.string,
   rent: PropTypes.number,
   available: PropTypes.bool,
+  rentedon: PropTypes.string,
 };
 
-Template2.defaultProps = {
+Template3.defaultProps = {
   userid: "anything",
   image:
     "http://res.cloudinary.com/dki83hf3c/image/upload/v1713703692/dsiw5ntcbzfywfabrssh.jpg",
@@ -101,6 +81,7 @@ Template2.defaultProps = {
   bio: "bio of user is show here..",
   rent: 2000,
   available: true,
+  rentedon: "date",
 };
 
-export default Template2;
+export default Template3;

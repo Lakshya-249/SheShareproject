@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Template2 from "./template2";
 import { useUser } from "@clerk/clerk-react";
+import Template3 from "./template3";
 
-const Cart = () => {
+const Refund = () => {
   const url = import.meta.env.VITE_DB_URL;
   const { user } = useUser();
   const [data, setdata] = useState([
@@ -14,6 +14,7 @@ const Cart = () => {
       _id: "none",
       bio: "bio",
       available: true,
+      rentedOn: "date",
     },
   ]);
   useEffect(() => {
@@ -37,7 +38,7 @@ const Cart = () => {
         <div>Oops nothing added to cart.</div>
       ) : (
         data.map((value) => (
-          <Template2
+          <Template3
             key={value._id}
             image={value.image}
             house_desc={value.house_desc}
@@ -45,6 +46,7 @@ const Cart = () => {
             rent={value.rent}
             userid={value._id}
             available={value.available}
+            rentedon={value.rentedOn}
           />
         ))
       )}
@@ -53,4 +55,4 @@ const Cart = () => {
   );
 };
 
-export default Cart;
+export default Refund;
