@@ -1,6 +1,6 @@
 import "./App.css";
 import Header from "./header";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Footer from "./footer";
 import { ClerkProvider } from "@clerk/clerk-react";
 

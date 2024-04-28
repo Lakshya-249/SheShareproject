@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import pic1 from "./assets/no-smoking.png";
 import pic2 from "./assets/no-animals.png";
 import pic3 from "./assets/credit-card.png";
-import { useUser } from "@clerk/clerk-react";
+// import { useUser } from "@clerk/clerk-react";
 
 const Sharepage2 = () => {
   const location = useLocation();

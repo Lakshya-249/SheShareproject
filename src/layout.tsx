@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 function Layout() {
   const navigate = useNavigate();
-  const { isSignedIn, user, isLoaded } = useUser();
+  const { isSignedIn, user } = useUser();
   useEffect(() => {
     const checklog = () => {
       if (!isSignedIn) {

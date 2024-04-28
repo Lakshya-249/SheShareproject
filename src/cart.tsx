@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Template2 from "./template2";
 import { useUser } from "@clerk/clerk-react";
 

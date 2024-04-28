@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Template from "./template";
 import { useLocation } from "react-router-dom";
 

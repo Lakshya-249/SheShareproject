@@ -1,5 +1,5 @@
 import { useUser } from "@clerk/clerk-react";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Review from "./review";
 
