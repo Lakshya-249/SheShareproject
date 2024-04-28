@@ -41,6 +41,7 @@ function Review() {
             <div className="flex space-x-2">
               {[...Array(value.rating)].map((i) => (
                 <FontAwesomeIcon
+                  key={i}
                   icon={faStar}
                   size="xs"
                   style={{ color: "#FFD43B" }}
