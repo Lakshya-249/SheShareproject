@@ -217,6 +217,7 @@ const Sharepage2 = () => {
           <input
             placeholder="to"
             type="text"
+            min={date}
             onChange={(e) => setData("rentTo", e.target.value)}
             onFocus={(e) => (e.target.type = "date")}
             onBlur={(e) => (e.target.type = "text")}

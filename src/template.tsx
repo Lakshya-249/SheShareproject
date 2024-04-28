@@ -8,7 +8,9 @@ function Template(props: any) {
   return (
     <div
       onClick={() => navigate("/user/profile3?userid=" + userid)}
-      className="w-[20rem] h-[20rem] flex flex-col m-10 pb-5 hover:cursor-pointer"
+      className={`w-[20rem] h-[20rem] ${
+        props.location == "State" ? "hidden" : "flex"
+      } flex-col m-10 pb-5 hover:cursor-pointer`}
     >
       <div className="w-full mb-2">
         <img
@@ -51,8 +53,7 @@ Template.propTypes = {
 
 Template.defaultProps = {
   userid: "anything",
-  image:
-    "http://res.cloudinary.com/dki83hf3c/image/upload/v1713703692/dsiw5ntcbzfywfabrssh.jpg",
+  image: "img",
   house_desc: "description of house is show here..",
   location: "State",
   rent: 2000,

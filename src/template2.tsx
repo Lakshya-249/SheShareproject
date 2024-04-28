@@ -46,7 +46,7 @@ function Template2(props: any) {
     return (
       <div
         onClick={() => navigate("/user/profile3?userid=" + userId)}
-        className="w-full h-[18rem] max-sm:h-auto max-sm:px-5 hover:cursor-pointer flex my-5 px-10 flex-wrap"
+        className="w-full max-sm:h-auto max-sm:px-5 hover:cursor-pointer flex my-5 px-10 flex-wrap"
       >
         <div className="w-[20%] bg-gray-200 h-full max-sm:h-auto rounded-xl max-sm:w-full">
           <img
@@ -56,10 +56,8 @@ function Template2(props: any) {
           />
         </div>
         <div className="w-[80%] p-10 text-left text-sm font-light space-y-4 max-sm:w-full max-sm:p-2">
-          <p className="text-xl h-[3.5rem] overflow-hidden">
-            {props.house_desc}
-          </p>
-          <p className="text-gray-400 h-[4rem] overflow-hidden">{props.bio}</p>
+          <p className="text-xl overflow-hidden">{props.house_desc}</p>
+          <p className="text-gray-400 overflow-hidden">{props.bio}</p>
           <p>
             Rent: <span className="font-semibold">&#8377; {props.rent}</span>{" "}
             month
@@ -75,7 +73,7 @@ function Template2(props: any) {
               onClick={handledelete}
               className="px-3 py-2 border-2 border-red-300 text-red-300 rounded-xl"
             >
-              Remove from review
+              Remove from Cart
             </button>
           </div>
         </div>

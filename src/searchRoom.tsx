@@ -1,11 +1,14 @@
+import { useUser } from "@clerk/clerk-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Search = () => {
   const [location, setlocation] = useState("");
+  const url = import.meta.env.VITE_DB_URL;
   const [bio, setbio] = useState("");
   const [cost, setcost] = useState("");
   const navigate = useNavigate();
+  const { user } = useUser();
   // console.log(preview);
   // console.log(address);
   // console.log(location);
@@ -14,8 +17,17 @@ const Search = () => {
     setbio(e.target.value);
     // console.log(bio);
   };
-  const handleClick = () => {
+  const handleClick = async () => {
     if (bio.trim() !== "") {
+      const response = await fetch(url + "api/updateUser", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userid: user?.id, interests: { bio } }),
+      });
+      const data = await response.json();
+      console.log(data);
       navigate(`/user/searchpage?location=${location}&cost=${cost}`);
     }
   };

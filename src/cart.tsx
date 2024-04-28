@@ -32,7 +32,7 @@ const Cart = () => {
     fetchval();
   }, [user]);
   return (
-    <div className="w-full flex flex-col my-5">
+    <div className="w-full flex flex-col items-center px-5 my-5">
       {data.length == 0 ? (
         <div>Oops nothing added to cart.</div>
       ) : (

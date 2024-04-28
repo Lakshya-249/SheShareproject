@@ -19,7 +19,7 @@ function Header() {
       } w-full flex justify-between py-3 px-10 max-sm:px-5 items-center`}
     >
       {/* <img src={logo} alt="logo" className="w-[12rem]" /> */}
-      <div className="flex items-center space-x-10">
+      <div className="flex items-center space-x-10 max-sm:space-x-5">
         <p className="font-[Forte] text-4xl text-gray-700">She Share</p>
         <FontAwesomeIcon
           onClick={() => navigate("/")}
@@ -29,7 +29,7 @@ function Header() {
           size="xl"
         />
       </div>
-      <div className="flex space-x-5 items-center">
+      <div className="flex space-x-5 max-sm:space-x-3 items-center">
         <FontAwesomeIcon
           onClick={() => navigate("/cart")}
           className="hover:cursor-pointer"
