@@ -51,7 +51,7 @@ function Mainpage() {
 
   return (
     <div className="w-full my-10 flex flex-col max-sm:flex-wrap">
-      <div className="flex w-full">
+      <div className="flex w-full max-sm:flex-wrap">
         <div className="w-[50%] max-sm:w-full flex justify-center">
           <div className="w-[20rem] h-[20rem] bg-gray-200">
             <img src={data.image} alt="image" />
