@@ -1,0 +1,180 @@
+# Deploy Lens - generated workflow
+#
+# 1. In your GitHub repo open Settings > Secrets and variables > Actions
+#    and create a repository secret named DEPLOY_LENS_TOKEN with the token
+#    you generated in Deploy Lens.
+# 2. Save this file as .github/workflows/deploy-lens.yml and push.
+#
+# Every push to the branch below builds your project on GitHub, streams the
+# build logs to Deploy Lens while the build is running, uploads the output
+# folder and waits until Deploy Lens has published it. The run fails if the
+# build fails or if Deploy Lens cannot publish the upload.
+
+name: Deploy Lens
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-lens-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DEPLOY_LENS_API: "http://localhost:8080"
+  DEPLOY_LENS_PROJECT: "fff8f7d8-1e4e-4e52-a0be-a64338665c02"
+  DEPLOY_LENS_TOKEN: ${{ secrets.DEPLOY_LENS_TOKEN }}
+  BUILD_DIR: "dist"
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Register deployment
+        run: |
+          if [ -z "$DEPLOY_LENS_TOKEN" ]; then
+            echo "::error::Repository secret DEPLOY_LENS_TOKEN is not set."
+            exit 1
+          fi
+
+          cat > "$RUNNER_TEMP/dl_send_logs.sh" <<'SCRIPT'
+          #!/usr/bin/env bash
+          # usage: dl_send_logs.sh <log file> [final]
+          # Sends the lines of the log file that were not sent yet. How many lines
+          # were already sent is remembered in $RUNNER_TEMP/dl_sent.
+          file="$1"
+          state="$RUNNER_TEMP/dl_sent"
+          max_lines=20000
+          [ -f "$file" ] || exit 0
+          sent=$(cat "$state" 2>/dev/null || echo 0)
+          total=$(wc -l < "$file" | tr -d ' ')
+          # On the final call also send a last line that has no trailing newline.
+          if [ "$2" = "final" ] && [ -n "$(tail -c 1 "$file")" ]; then total=$((total + 1)); fi
+          count=$((total - sent))
+          [ "$count" -gt 0 ] || exit 0
+          [ "$((sent + count))" -le "$max_lines" ] || count=$((max_lines - sent))
+          [ "$count" -gt 0 ] || exit 0
+          rm -f "$RUNNER_TEMP"/dl_chunk_*
+          tail -n +"$((sent + 1))" "$file" | head -n "$count" | sed -E 's/\x1b\[[0-9;]*[A-Za-z]//g' | split -l 200 - "$RUNNER_TEMP/dl_chunk_"
+          for chunk in "$RUNNER_TEMP"/dl_chunk_*; do
+            [ -f "$chunk" ] || continue
+            jq -Rs '{logs: (split("\n") | map(select(length > 0) | .[0:2000]) | map({level: (if test("\\berror\\b|ERR!|\\bfailed\\b|\\bfatal\\b"; "i") then "error" elif test("\\bwarn(ing)?\\b"; "i") then "warn" else "info" end), message: .}))}' "$chunk" |
+              curl -sS -o /dev/null --max-time 20 --retry 2 -X POST \
+                "$DEPLOY_LENS_API/api/projects/$DEPLOY_LENS_PROJECT/deployments/$DEPLOYMENT_ID/logs" \
+                -H "Authorization: Bearer $DEPLOY_LENS_TOKEN" \
+                -H "Content-Type: application/json" \
+                --data-binary @- || true
+            rm -f "$chunk"
+          done
+          echo "$((sent + count))" > "$state"
+          SCRIPT
+          chmod +x "$RUNNER_TEMP/dl_send_logs.sh"
+
+          BODY=$(jq -n --arg commit "$GITHUB_SHA" --arg branch "$GITHUB_REF_NAME" '{commit: $commit, branch: $branch}')
+          RESPONSE=$(curl -sS --fail-with-body -X POST \
+            "$DEPLOY_LENS_API/api/projects/$DEPLOY_LENS_PROJECT/deployments" \
+            -H "Authorization: Bearer $DEPLOY_LENS_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$BODY")
+          DEPLOYMENT_ID=$(echo "$RESPONSE" | jq -r '.data.deployment_id')
+          if [ -z "$DEPLOYMENT_ID" ] || [ "$DEPLOYMENT_ID" = "null" ]; then
+            echo "::error::Deploy Lens did not return a deployment id: $RESPONSE"
+            exit 1
+          fi
+          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> "$GITHUB_ENV"
+          echo "Deployment $DEPLOYMENT_ID registered"
+
+      - name: Install and build
+        run: |
+          LOG="$RUNNER_TEMP/build.log"
+          : > "$LOG"
+          rm -f "$RUNNER_TEMP/dl_done" "$RUNNER_TEMP/dl_sent"
+
+          # Send the build log to Deploy Lens every couple of seconds while the
+          # build is running. When this step ends, one last pass sends the rest.
+          (
+            while [ ! -f "$RUNNER_TEMP/dl_done" ]; do
+              bash "$RUNNER_TEMP/dl_send_logs.sh" "$LOG" || true
+              sleep 2
+            done
+            bash "$RUNNER_TEMP/dl_send_logs.sh" "$LOG" final || true
+          ) &
+          SENDER_PID=$!
+          trap 'touch "$RUNNER_TEMP/dl_done"; wait "$SENDER_PID" || true' EXIT
+
+          if [ -f package-lock.json ]; then INSTALL="npm ci"; else INSTALL="npm install"; fi
+          {
+            echo "$ $INSTALL"
+            $INSTALL
+            echo "$ npm run build"
+            npm run build
+          } 2>&1 | tee "$LOG"
+
+      - name: Package build output
+        run: |
+          if [ ! -f "$BUILD_DIR/index.html" ]; then
+            echo "::error::$BUILD_DIR/index.html not found. Set the correct build output folder."
+            exit 1
+          fi
+          (cd "$BUILD_DIR" && zip -qr "$RUNNER_TEMP/site.zip" .)
+
+      - name: Upload to Deploy Lens
+        run: |
+          curl -sS --fail-with-body --retry 3 -X POST \
+            "$DEPLOY_LENS_API/api/projects/$DEPLOY_LENS_PROJECT/deploy_zip" \
+            -H "Authorization: Bearer $DEPLOY_LENS_TOKEN" \
+            -F "deployment_id=$DEPLOYMENT_ID" \
+            -F "file=@$RUNNER_TEMP/site.zip"
+
+      - name: Wait for Deploy Lens
+        run: |
+          # The upload is accepted right away and published in the background,
+          # so ask Deploy Lens how it went instead of reporting a false success.
+          for _ in $(seq 1 90); do
+            RESPONSE=$(curl -sS --max-time 20 \
+              "$DEPLOY_LENS_API/api/projects/$DEPLOY_LENS_PROJECT/deployments/$DEPLOYMENT_ID" \
+              -H "Authorization: Bearer $DEPLOY_LENS_TOKEN" || true)
+            STATUS=$(echo "$RESPONSE" | jq -r '.data.status // empty' 2>/dev/null || true)
+            case "$STATUS" in
+              ready)
+                echo "Deployment $DEPLOYMENT_ID is live."
+                exit 0
+                ;;
+              failed)
+                REASON=$(echo "$RESPONSE" | jq -r '.data.error_message // "see the deployment logs"' | tr '\r\n' '  ')
+                echo "::error::Deploy Lens could not publish the build: $REASON"
+                exit 1
+                ;;
+            esac
+            sleep 5
+          done
+          echo "::warning::Deploy Lens is still processing the upload. Check the deployment in the dashboard."
+
+      - name: Report failure
+        if: (failure() || cancelled()) && env.DEPLOYMENT_ID != ''
+        env:
+          JOB_STATUS: ${{ job.status }}
+        run: |
+          jq -n --arg error "GitHub Actions run $JOB_STATUS: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" '{status: "failed", error: $error}' |
+            curl -sS -o /dev/null -X POST \
+              "$DEPLOY_LENS_API/api/projects/$DEPLOY_LENS_PROJECT/deployments/$DEPLOYMENT_ID/finish" \
+              -H "Authorization: Bearer $DEPLOY_LENS_TOKEN" \
+              -H "Content-Type: application/json" \
+              --data-binary @- || true
